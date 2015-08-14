@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>790DF9F3-C679-46D6-9371-585CAC7CB5E8</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>C_debug</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>4F2B43F546AD39348A1EE53F39DE08005C922C59</key>
 		<string>github.com:samphilipd/k-and-r.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>C_debug/C_debug.xcodeproj/project.xcworkspace</string>
+	<string>C_debug/C_debug.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>4F2B43F546AD39348A1EE53F39DE08005C922C59</key>

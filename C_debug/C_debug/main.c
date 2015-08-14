@@ -1,80 +1,64 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-#define DELIMITER      ' '
-#define LINE_WIDTH      80
-#define MAX_WORD_LENGTH 100
-#define SPACE_WIDTH     1
+#define MAX_LEN 1000
 
-int scan(char word[]);
-int buffer(char word[]);
-
-
-// Write a program to 'fold' long input lines into two or more shorter lines
-// after the last non-blank character that occurs before the n-th column of
-// input. Make sure your program does something intelligent with very long
-// lines, and if there are no blanks or tabs before the specified column.
+void squeeze(char remove_chars[], char to_squeeze[], int len);
+int does_contain(char s[], char c);
 
 int main()
 {
-    int remaining = LINE_WIDTH;
-    char word[MAX_WORD_LENGTH] = { '\0' };
+    char c;
+    char s1[MAX_LEN + 1];
+    char s2[MAX_LEN + 1];
+    int len1 = 0;
+    int len2 = 0;
     
-    while((scan(word) > EOF)) {
-        int width = strlen(word);
-        
-        if (word[width + 1] == '\n') {
-            remaining = LINE_WIDTH;
-        } else if (width > remaining) {
-            printf("\n");
-            remaining = LINE_WIDTH - width;
-        } else {
-            remaining = remaining - width - SPACE_WIDTH;
-        }
-        
-        printf("%s", word);
-        putchar(' ');
+    printf("Enter string: ");
+    while ((c = getchar()) != '\n' && len2 <= MAX_LEN) {
+        s2[len2++] = c;
     }
+    s2[len2] = '\0';
     
-    return EXIT_SUCCESS;
+    printf("Enter characters to remove: ");
+    while ((c = getchar()) != '\n' && len1 <= MAX_LEN) {
+        s1[len1++] = c;
+    }
+    s1[len1] = '\0';
+    
+    squeeze(s1, s2, len2);
+    
+    printf("Squeezed string is: %s\n", s2);
+    
+    return 0;
 }
 
-// scanning state. waiting for beginning of word
-int scan(char word[])
+// removes every character in remove_chars from to_squeeze
+void squeeze(char remove_chars[], char to_squeeze[], int len)
 {
     char c;
+    int i = 0;
+    int j = 0;
     
-    while ((c = getchar()) != EOF) {
-        if (c != DELIMITER) {
-            word[0] = c;
-            return buffer(word);
+    while (to_squeeze[i] != '\0') {
+        c = to_squeeze[i++];
+        if (does_contain(remove_chars, c)) {
+            continue;// ignore character and move on to next one
+        } else {
+            to_squeeze[j++] = c; // push character onto tmp
         }
     }
     
-    return EOF;
+    to_squeeze[j] = '\0';
 }
 
-// buffering state. waiting for end of word
-int buffer(char word[])
-{
-    int c, idx = 1;
+// returns 1 if s contains c, otherwise 0
+int does_contain(char s[], char c) {
+    int i = 0;
     
-    while ((c = getchar())) {
-        if (c != DELIMITER && c != EOF && c != '\n' && idx < MAX_WORD_LENGTH) {
-            word[idx] = c;
-        } else {
-            if (c == '\n') {
-                word[idx] = '\n';
-                word[idx + 1] = '\0';
-            } else {
-                word[idx] = '\0';
-            }
-            return strlen(word);
-        }
-        
-        ++idx;
+    while (s[i] != '\0') {
+        if (s[i++] == c)
+            return 1;
     }
     
-    return EOF;
+    return 0;
 }
