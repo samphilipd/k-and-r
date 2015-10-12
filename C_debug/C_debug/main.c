@@ -1,64 +1,66 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define MAX_LEN 1000
+#define STACKVALUE 100
 
-void squeeze(char remove_chars[], char to_squeeze[], int len);
-int does_contain(char s[], char c);
+static double stack[STACKVALUE];
+static double *pStack = stack; /* next free position in stack */
 
+void push(double value) {
+        if(pStack - stack > STACKVALUE) {
+                printf("error: there is not enough space in stack");
+        }
+        else {
+                *(pStack++) = value;
+        }
+}
+
+double pop(void) {
+        if((pStack - stack) > 0) {
+                return *--pStack;
+        }
+        
+        printf("warning: stack is empty");
+        return 0.0;
+}
+
+double peek(void) {
+        return *(pStack - 1);
+}
+
+#define MAXLINELEN 100
+#define DELIM " "
+
+// expr: a reverse polish calculator
+// example: expr 2 3 4 + * => 2 x (3+4) => 14
+// naiive version, does no error checking on input
 int main()
 {
-    char c;
-    char s1[MAX_LEN + 1];
-    char s2[MAX_LEN + 1];
-    int len1 = 0;
-    int len2 = 0;
-    
-    printf("Enter string: ");
-    while ((c = getchar()) != '\n' && len2 <= MAX_LEN) {
-        s2[len2++] = c;
-    }
-    s2[len2] = '\0';
-    
-    printf("Enter characters to remove: ");
-    while ((c = getchar()) != '\n' && len1 <= MAX_LEN) {
-        s1[len1++] = c;
-    }
-    s1[len1] = '\0';
-    
-    squeeze(s1, s2, len2);
-    
-    printf("Squeezed string is: %s\n", s2);
-    
-    return 0;
-}
-
-// removes every character in remove_chars from to_squeeze
-void squeeze(char remove_chars[], char to_squeeze[], int len)
-{
-    char c;
-    int i = 0;
-    int j = 0;
-    
-    while (to_squeeze[i] != '\0') {
-        c = to_squeeze[i++];
-        if (does_contain(remove_chars, c)) {
-            continue;// ignore character and move on to next one
-        } else {
-            to_squeeze[j++] = c; // push character onto tmp
+        size_t nbytes = MAXLINELEN;
+        char * line;
+        
+        line = (char *) malloc (nbytes + 1);
+        
+        double first;
+        double second;
+        
+        while(getline(&line, &nbytes, stdin)) {
+                char * token;
+                token = strtok(line, DELIM);
+                while (token != NULL) {
+                        switch (*token) {
+                                case '+':
+                                        first = pop();
+                                        second = pop();
+                                        push(second + first);
+                                        break;
+                                default:
+                                        push(atof(token));
+                                        break;
+                        }
+                        token = strtok(NULL, DELIM);
+                }
+                printf("%f\n", peek());
         }
-    }
-    
-    to_squeeze[j] = '\0';
-}
-
-// returns 1 if s contains c, otherwise 0
-int does_contain(char s[], char c) {
-    int i = 0;
-    
-    while (s[i] != '\0') {
-        if (s[i++] == c)
-            return 1;
-    }
-    
-    return 0;
 }
